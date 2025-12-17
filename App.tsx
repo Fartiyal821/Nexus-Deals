@@ -7,7 +7,7 @@ import ComparisonView from './components/ComparisonView';
 import { ToastContainer, ToastMessage } from './components/Toast';
 import { MOCK_DEALS, CATEGORIES } from './constants';
 import { ViewState, Product } from './types';
-import { Search, Filter, Loader2, Scale, Timer } from 'lucide-react';
+import { Search, Filter, Loader2, Scale, Timer, X } from 'lucide-react';
 import { fetchLivePrices } from './services/apiService';
 
 function App() {
@@ -21,8 +21,9 @@ function App() {
   // Comparison State
   const [compareList, setCompareList] = useState<Product[]>([]);
 
-  // Banner State
+  // Banner & Popup State
   const [showBanner, setShowBanner] = useState(true);
+  const [showPromoPopup, setShowPromoPopup] = useState(false);
 
   // Toast Handler
   const addToast = (title: string, message: string, type: 'success' | 'info' | 'warning' = 'info') => {
@@ -34,14 +35,13 @@ function App() {
     setToasts(prev => prev.filter(t => t.id !== id));
   };
 
-  // Social Proof Simulation (Fake purchases to drive urgency)
+  // Social Proof Simulation
   useEffect(() => {
     const names = ['Rahul', 'Aditya', 'Sneha', 'Vikram', 'Priya', 'Amit'];
     const cities = ['Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Pune'];
     const actions = ['just bought', 'just ordered', 'snagged a deal on'];
 
     const socialProofInterval = setInterval(() => {
-      // Only show if user is idle/viewing deals
       if (Math.random() > 0.7 && products.length > 0) {
         const randomProduct = products[Math.floor(Math.random() * products.length)];
         const randomName = names[Math.floor(Math.random() * names.length)];
@@ -54,10 +54,18 @@ function App() {
           "success"
         );
       }
-    }, 15000); // Every 15 seconds
+    }, 15000);
 
     return () => clearInterval(socialProofInterval);
   }, [products]);
+
+  // Promo Popup Logic
+  useEffect(() => {
+    const timer = setTimeout(() => {
+       setShowPromoPopup(true);
+    }, 5000); // Show popup after 5 seconds
+    return () => clearTimeout(timer);
+  }, []);
 
   // Listen for custom price alert events
   useEffect(() => {
@@ -76,36 +84,37 @@ function App() {
     const loadData = async (isInitial = false) => {
       if (isInitial) setLoading(true);
       
-      // Fetch fresh data
-      const liveData = await fetchLivePrices(MOCK_DEALS);
-      setProducts(liveData);
-      
-      if (isInitial) setLoading(false);
+      try {
+        // Fetch fresh data
+        const liveData = await fetchLivePrices(MOCK_DEALS);
+        setProducts(liveData);
+      } catch (error) {
+        console.error("Error loading deals:", error);
+        // Fallback to mock if API fails
+        setProducts(MOCK_DEALS);
+      } finally {
+        if (isInitial) setLoading(false);
+      }
     };
 
     // Initial fetch
     loadData(true);
 
-    // Set up 30-second interval
     const intervalId = setInterval(() => {
-      loadData(false); // Background update, don't trigger full loading screen
+      loadData(false);
     }, 30000);
 
-    // Cleanup interval on component unmount
     return () => clearInterval(intervalId);
   }, []);
 
   // Handle Comparison Toggle
   const handleToggleCompare = (product: Product) => {
     setCompareList(prev => {
-      // Check if already in list
       const exists = prev.find(p => p.id === product.id);
       
       if (exists) {
-        // Remove if exists
         return prev.filter(p => p.id !== product.id);
       } else {
-        // Add if not exists (check limit)
         if (prev.length >= 4) {
            addToast("Comparison Limit Reached", "You can compare up to 4 items at a time.", "warning");
            return prev;
@@ -240,6 +249,32 @@ function App() {
              <Timer size={14} className="animate-pulse" />
              <span>FLASH SALE: EXTRA 15% OFF SELECTED GPUS - ENDS IN 2:45:00</span>
              <button onClick={() => setShowBanner(false)} className="absolute right-4 top-1/2 -translate-y-1/2 opacity-70 hover:opacity-100">✕</button>
+          </div>
+        </div>
+      )}
+
+      {/* Limited Time Promo Popup */}
+      {showPromoPopup && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setShowPromoPopup(false)} />
+          <div className="relative bg-gradient-to-br from-nexus-900 to-nexus-800 border-2 border-nexus-gold rounded-2xl p-8 max-w-md w-full text-center shadow-[0_0_50px_rgba(245,158,11,0.3)] animate-bounce-slow">
+            <button onClick={() => setShowPromoPopup(false)} className="absolute top-4 right-4 text-slate-400 hover:text-white">
+              <X size={24} />
+            </button>
+            <div className="inline-block p-3 rounded-full bg-nexus-gold/20 text-nexus-gold mb-4 animate-pulse">
+               <Timer size={32} />
+            </div>
+            <h2 className="text-2xl font-display font-bold text-white mb-2">Wait! Don't Miss Out</h2>
+            <p className="text-slate-300 mb-6">
+              Prices on RTX 40-Series are predicted to <span className="text-red-400 font-bold">rise 12%</span> in the next 24 hours due to supply shortages.
+            </p>
+            <button 
+              onClick={() => setShowPromoPopup(false)}
+              className="w-full py-3 bg-nexus-gold hover:bg-nexus-goldHover text-black font-bold rounded-xl transition-all hover:scale-105 shadow-lg"
+            >
+              Secure My Deal Now
+            </button>
+            <p className="text-[10px] text-slate-500 mt-3">Nexus AI Market Prediction Engine • 94% Accuracy</p>
           </div>
         </div>
       )}
