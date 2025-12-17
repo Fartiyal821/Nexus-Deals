@@ -10,7 +10,7 @@ const AIAssistant: React.FC = () => {
     {
       id: 'welcome',
       role: 'model',
-      text: 'Greetings, Builder. I am Nexus AI. I can help you find the best deals or plan your next dream rig. What are you looking for today?',
+      text: 'Greetings, Builder. I am Nexus Logic. I can help you find the best deals or plan your next dream rig. What are you looking for today?',
       timestamp: Date.now()
     }
   ]);
@@ -64,12 +64,12 @@ const AIAssistant: React.FC = () => {
           </div>
           <div>
             <h2 className="font-display font-bold text-xl text-white">Nexus Architect</h2>
-            <p className="text-xs text-nexus-accent">AI-Powered Build Assistant</p>
+            <p className="text-xs text-nexus-accent">Automated Build Assistant</p>
           </div>
         </div>
         <div className="hidden md:flex items-center gap-2 text-xs text-slate-400 bg-nexus-800 px-3 py-1 rounded-full border border-nexus-700">
           <Sparkles size={12} className="text-yellow-400" />
-          Powered by Gemini 2.5 Flash
+          Powered by Nexus Logic Engine
         </div>
       </div>
 
@@ -114,7 +114,7 @@ const AIAssistant: React.FC = () => {
             </div>
             <div className="bg-nexus-900 border border-nexus-700 p-4 rounded-2xl rounded-tl-none flex items-center gap-2 text-slate-400 text-sm">
               <Loader2 size={16} className="animate-spin" />
-              Calculating optimal configurations...
+              Scanning inventory database...
             </div>
           </div>
         )}
@@ -128,7 +128,7 @@ const AIAssistant: React.FC = () => {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask me anything: 'Best GPU under $500', 'Build a streaming PC', 'Is this deal good?'"
+            placeholder="Search inventory: 'Best GPU', 'Cheap SSD', 'Gaming Mouse'"
             className="w-full bg-nexus-800 text-white placeholder-slate-500 pl-4 pr-12 py-4 rounded-xl border border-nexus-700 focus:outline-none focus:border-nexus-accent focus:ring-1 focus:ring-nexus-accent transition-all shadow-inner"
           />
           <button 
@@ -140,7 +140,7 @@ const AIAssistant: React.FC = () => {
           </button>
         </form>
         <p className="text-center text-[10px] text-slate-600 mt-2">
-          Nexus AI can make mistakes. Always verify specs before purchasing.
+          Nexus Logic provides automated recommendations based on current stock.
         </p>
       </div>
     </div>
