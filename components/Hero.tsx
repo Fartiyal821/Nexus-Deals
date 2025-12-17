@@ -1,6 +1,6 @@
 import React from 'react';
 import { ViewState } from '../types';
-import { ArrowRight, Zap, Scan, Search } from 'lucide-react';
+import { ArrowRight, Zap, Scan, Search, ShieldCheck } from 'lucide-react';
 
 interface HeroProps {
   onStartBuilding: () => void;
@@ -26,18 +26,18 @@ const Hero: React.FC<HeroProps> = ({ onStartBuilding }) => {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
               </span>
-              LIVE DEAL TRACKER ACTIVE
+              LIVE DEAL TRACKER ACTIVE • 50+ RETAILERS
             </div>
             
             <h1 className="text-5xl md:text-7xl font-display font-bold text-white mb-6 tracking-tight leading-[1.1]">
-              Dominate <br />
+              Stop Overpaying <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-nexus-accent to-indigo-400 animate-glow">
-                The Market.
+                For Performance.
               </span>
             </h1>
             
             <p className="max-w-xl text-lg text-slate-400 mb-8 leading-relaxed">
-              Our AI scans Amazon, Flipkart, and Newegg every 30 seconds. Stop overpaying for your battlestation.
+              Our AI scans Amazon, Flipkart, and Newegg every 30 seconds to find price errors and hidden drops. <span className="text-white font-medium">Save up to 40%</span> on your next build.
             </p>
             
             <div className="flex flex-col sm:flex-row items-center gap-4">
@@ -46,11 +46,21 @@ const Hero: React.FC<HeroProps> = ({ onStartBuilding }) => {
                 className="w-full sm:w-auto px-8 py-4 bg-nexus-accent hover:bg-nexus-accentHover text-white font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:shadow-[0_0_30px_rgba(139,92,246,0.6)] flex items-center justify-center gap-2 group border border-white/10"
               >
                 <Zap size={18} fill="currentColor" />
-                Start AI Builder
+                Find My Parts
               </button>
-              <button className="w-full sm:w-auto px-8 py-4 bg-nexus-800/50 hover:bg-nexus-700/50 text-white font-semibold rounded-xl border border-nexus-700 hover:border-nexus-accent/50 transition-colors backdrop-blur-sm">
-                View Today's Drops
+              <button className="w-full sm:w-auto px-8 py-4 bg-nexus-800/50 hover:bg-nexus-700/50 text-white font-semibold rounded-xl border border-nexus-700 hover:border-nexus-accent/50 transition-colors backdrop-blur-sm flex items-center justify-center gap-2">
+                <ShieldCheck size={18} />
+                Verified Deals
               </button>
+            </div>
+            
+            <div className="mt-8 flex items-center justify-center md:justify-start gap-4 text-xs text-slate-500">
+               <div className="flex -space-x-2">
+                  {[1,2,3,4].map(i => (
+                    <div key={i} className="w-6 h-6 rounded-full bg-slate-700 border border-nexus-900"></div>
+                  ))}
+               </div>
+               <p>Trusted by 10,000+ builders this month</p>
             </div>
           </div>
 
@@ -71,7 +81,7 @@ const Hero: React.FC<HeroProps> = ({ onStartBuilding }) => {
                 <div className="space-y-3 font-mono text-xs">
                   <div className="flex justify-between text-emerald-400">
                     <span>> Found: RTX 4090</span>
-                    <span>-15% OFF</span>
+                    <span>-15% OFF (Verified)</span>
                   </div>
                   <div className="flex justify-between text-slate-400">
                     <span>> Scanning Newegg...</span>
@@ -97,8 +107,8 @@ const Hero: React.FC<HeroProps> = ({ onStartBuilding }) => {
                       <Search size={20} />
                    </div>
                    <div>
-                      <div className="text-xs text-slate-400">Deals Found</div>
-                      <div className="text-lg font-bold text-white">1,240</div>
+                      <div className="text-xs text-slate-400">Savings Found</div>
+                      <div className="text-lg font-bold text-white">₹ 1.2 Lakh</div>
                    </div>
                 </div>
              </div>

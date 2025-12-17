@@ -31,6 +31,31 @@ function App() {
     setToasts(prev => prev.filter(t => t.id !== id));
   };
 
+  // Social Proof Simulation (Fake purchases to drive urgency)
+  useEffect(() => {
+    const names = ['Rahul', 'Aditya', 'Sneha', 'Vikram', 'Priya', 'Amit'];
+    const cities = ['Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Pune'];
+    const actions = ['just bought', 'just ordered', 'snagged a deal on'];
+
+    const socialProofInterval = setInterval(() => {
+      // Only show if user is idle/viewing deals
+      if (Math.random() > 0.7 && products.length > 0) {
+        const randomProduct = products[Math.floor(Math.random() * products.length)];
+        const randomName = names[Math.floor(Math.random() * names.length)];
+        const randomCity = cities[Math.floor(Math.random() * cities.length)];
+        const action = actions[Math.floor(Math.random() * actions.length)];
+
+        addToast(
+          "New Purchase Verified", 
+          `${randomName} from ${randomCity} ${action} ${randomProduct.name.substring(0, 20)}...`, 
+          "success"
+        );
+      }
+    }, 15000); // Every 15 seconds
+
+    return () => clearInterval(socialProofInterval);
+  }, [products]);
+
   // Listen for custom price alert events
   useEffect(() => {
     const handlePriceAlert = (event: CustomEvent<{ title: string; message: string; type: 'success' | 'info' | 'warning' }>) => {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Product, Review } from '../types';
-import { ShoppingCart, Star, TrendingDown, Clock, ExternalLink, Zap, CheckCircle2, MessageSquare, X, ChevronLeft, ChevronRight, Loader2, Bell, BellRing, Package, Scale, Share2 } from 'lucide-react';
+import { ShoppingCart, Star, TrendingDown, Clock, ExternalLink, Zap, CheckCircle2, MessageSquare, X, ChevronLeft, ChevronRight, Loader2, Bell, BellRing, Package, Scale, Share2, TrendingUp, AlertTriangle } from 'lucide-react';
 import { generateAffiliateLink, formatTimeLeft, fetchProductReviews } from '../services/apiService';
 import ShareModal from './ShareModal';
 
@@ -25,6 +25,9 @@ const DealCard: React.FC<DealCardProps> = ({ product, isSelectedForCompare, onTo
   // Share Modal State
   const [showShareModal, setShowShareModal] = useState(false);
 
+  // AI Prediction Mock
+  const [prediction, setPrediction] = useState<'rising' | 'falling' | 'stable'>('stable');
+
   // Initialize Alert State from LocalStorage
   useEffect(() => {
     const savedAlert = localStorage.getItem(`nexus_alert_${product.id}`);
@@ -33,6 +36,10 @@ const DealCard: React.FC<DealCardProps> = ({ product, isSelectedForCompare, onTo
       setActiveAlert(parsed.targetPrice);
       setTargetPrice(parsed.targetPrice.toString());
     }
+
+    // Randomize prediction for UI demo
+    const preds: ('rising' | 'falling' | 'stable')[] = ['rising', 'stable', 'falling'];
+    setPrediction(preds[Math.floor(Math.random() * preds.length)]);
   }, [product.id]);
 
   // Check Price Alert Logic
@@ -161,7 +168,7 @@ const DealCard: React.FC<DealCardProps> = ({ product, isSelectedForCompare, onTo
         )}
 
         {/* Retailer Badge */}
-        <div className="absolute top-0 right-0 z-20 bg-nexus-900/90 px-3 py-1 rounded-bl-xl border-b border-l border-nexus-700 text-[10px] font-bold tracking-wider text-slate-300 uppercase flex items-center gap-1">
+        <div className="absolute top-0 right-0 z-20 bg-nexus-900/90 px-3 py-1 rounded-bl-xl border-b border-l border-nexus-700 text-[10px] font-bold tracking-wider text-slate-300 uppercase flex items-center gap-1 shadow-lg">
           {product.retailer}
           <CheckCircle2 size={10} className="text-nexus-success" />
         </div>
@@ -195,7 +202,7 @@ const DealCard: React.FC<DealCardProps> = ({ product, isSelectedForCompare, onTo
           {!showReviews && (
             <div className="absolute inset-0 bg-nexus-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
                <span className="text-white font-semibold flex items-center gap-2 border border-white/30 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors pointer-events-none">
-                  View Details <ExternalLink size={14} />
+                  View Specs <ExternalLink size={14} />
                </span>
             </div>
           )}
@@ -331,10 +338,18 @@ const DealCard: React.FC<DealCardProps> = ({ product, isSelectedForCompare, onTo
               </span>
             ))}
           </div>
+          
+          {/* AI Price Prediction - Revenue Driver */}
+          {prediction === 'rising' && (
+             <div className="flex items-center gap-1.5 mb-3 text-[10px] text-orange-400 bg-orange-400/10 px-2 py-1 rounded border border-orange-400/20 w-fit animate-pulse">
+                <TrendingUp size={12} />
+                <span>AI Prediction: Price Rising Soon</span>
+             </div>
+          )}
 
           {/* Countdown Timer */}
           {product.dealEndsIn && (
-            <div className="flex items-center gap-2 mb-4 text-xs font-medium text-orange-400 bg-orange-400/10 px-2 py-1.5 rounded-lg border border-orange-400/20 w-fit">
+            <div className="flex items-center gap-2 mb-4 text-xs font-medium text-nexus-accent bg-nexus-accent/10 px-2 py-1.5 rounded-lg border border-nexus-accent/20 w-fit">
               <Clock size={12} className="animate-pulse" />
               Ends in: {formatTimeLeft(product.dealEndsIn)}
             </div>
@@ -397,11 +412,11 @@ const DealCard: React.FC<DealCardProps> = ({ product, isSelectedForCompare, onTo
               href={affiliateUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="relative w-full group/btn overflow-hidden rounded-xl bg-gradient-to-r from-nexus-accent to-indigo-600 p-[1px] transition-all duration-300 hover:shadow-[0_0_20px_rgba(139,92,246,0.5)]"
+              className="relative w-full group/btn overflow-hidden rounded-xl bg-gradient-to-r from-nexus-accent to-indigo-600 p-[1px] transition-all duration-300 hover:shadow-[0_0_20px_rgba(139,92,246,0.5)] transform hover:scale-[1.02]"
             >
               <div className="relative flex items-center justify-center gap-2 rounded-xl bg-nexus-900/90 px-4 py-3 text-white transition-all group-hover/btn:bg-transparent font-bold">
                 <ShoppingCart size={18} />
-                Check Availability
+                <span className="tracking-wide">Check Price & Buy</span>
               </div>
             </a>
           </div>

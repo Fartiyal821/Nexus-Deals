@@ -8,12 +8,12 @@
     <!-- Replace content="YOUR_CODE_HERE" with the code provided by Google Search Console -->
     <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE_HERE" />
     
-    <title>Nexus PC Deals | AI Powered Savings</title>
-    <meta name="description" content="Nexus PC Deals - AI-powered PC part picker and deal finder. Compare prices on GPUs, CPUs, and more." />
+    <title>Nexus PC Deals | AI Powered Hardware Savings</title>
+    <meta name="description" content="Find the best PC hardware deals. Nexus AI tracks prices on GPUs, CPUs, and components to save you money. Real-time alerts and price predictions." />
     
     <!-- Open Graph Tags for Social Sharing -->
-    <meta property="og:title" content="Nexus PC Deals | AI Powered Savings" />
-    <meta property="og:description" content="Find the best PC hardware deals and build your dream rig with AI assistance." />
+    <meta property="og:title" content="Nexus PC Deals | Don't Overpay for PC Parts" />
+    <meta property="og:description" content="Our AI scans retailers every 30s to find the lowest prices on RTX 4090s, Ryzens, and more." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://fartiyal821.github.io/PC-Deals/" />
     
@@ -35,6 +35,8 @@
                 accent: '#8b5cf6', // Violet
                 accentHover: '#7c3aed',
                 success: '#10b981',
+                warning: '#f59e0b',
+                danger: '#ef4444',
               }
             },
             animation: {
@@ -42,6 +44,7 @@
               'glow': 'glow 2s ease-in-out infinite alternate',
               'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
               'bounce-slow': 'bounce 3s infinite',
+              'slide-in': 'slideIn 0.5s ease-out forwards',
             },
             keyframes: {
               glow: {
@@ -55,6 +58,10 @@
               fadeInUp: {
                 '0%': { opacity: '0', transform: 'translateY(20px)' },
                 '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              slideIn: {
+                '0%': { transform: 'translateX(100%)', opacity: '0' },
+                '100%': { transform: 'translateX(0)', opacity: '1' },
               }
             }
           },
@@ -104,6 +111,7 @@
 </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+    <!-- Changed /index.tsx to ./index.tsx for GitHub Pages relative path support -->
+    <script type="module" src="./index.tsx"></script>
   </body>
 </html>
