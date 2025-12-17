@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Product, Review } from '../types';
-import { ShoppingCart, Star, TrendingDown, Clock, ExternalLink, Zap, CheckCircle2, MessageSquare, X, ChevronLeft, ChevronRight, Loader2, Bell, BellRing, Package, Scale, Share2, TrendingUp, AlertTriangle, Crown } from 'lucide-react';
+import { ShoppingCart, Star, TrendingDown, Clock, ExternalLink, Zap, CheckCircle2, MessageSquare, X, ChevronLeft, ChevronRight, Loader2, Bell, BellRing, Package, Scale, Share2, TrendingUp, AlertTriangle, Crown, BarChart3 } from 'lucide-react';
 import { generateAffiliateLink, formatTimeLeft, fetchProductReviews } from '../services/apiService';
 import ShareModal from './ShareModal';
 
@@ -27,6 +27,9 @@ const DealCard: React.FC<DealCardProps> = ({ product, isSelectedForCompare, onTo
 
   // AI Prediction Mock
   const [prediction, setPrediction] = useState<'rising' | 'falling' | 'stable'>('stable');
+  
+  // Scarcity Mock
+  const [stockLevel, setStockLevel] = useState(100);
 
   // Initialize Alert State from LocalStorage
   useEffect(() => {
@@ -40,6 +43,9 @@ const DealCard: React.FC<DealCardProps> = ({ product, isSelectedForCompare, onTo
     // Randomize prediction for UI demo
     const preds: ('rising' | 'falling' | 'stable')[] = ['rising', 'stable', 'falling'];
     setPrediction(preds[Math.floor(Math.random() * preds.length)]);
+    
+    // Random stock level for scarcity (between 3% and 40%)
+    setStockLevel(Math.floor(Math.random() * 37) + 3);
   }, [product.id]);
 
   // Check Price Alert Logic
@@ -200,7 +206,11 @@ const DealCard: React.FC<DealCardProps> = ({ product, isSelectedForCompare, onTo
           {/* Placeholder Graphic (No Image) */}
           <div className={`w-full h-full flex items-center justify-center bg-nexus-800 transition-all duration-500 ${showReviews ? 'blur-sm scale-110 opacity-40' : 'opacity-90 group-hover:opacity-100 group-hover:scale-105'}`}>
              <div className="absolute inset-0 opacity-10 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,.2)_50%,transparent_75%,transparent_100%)] bg-[length:20px_20px]"></div>
-             <Package size={64} className="text-nexus-700 opacity-30" />
+             {product.image ? (
+                <img src={product.image} alt={product.name} className="w-full h-full object-cover opacity-80" />
+             ) : (
+                <Package size={64} className="text-nexus-700 opacity-30" />
+             )}
           </div>
           
           {/* Gradient Overlay */}
@@ -347,13 +357,24 @@ const DealCard: React.FC<DealCardProps> = ({ product, isSelectedForCompare, onTo
             ))}
           </div>
           
-          {/* AI Price Prediction - Revenue Driver */}
-          {prediction === 'rising' && (
-             <div className="flex items-center gap-1.5 mb-3 text-[10px] text-orange-400 bg-orange-400/10 px-2 py-1 rounded border border-orange-400/20 w-fit animate-pulse">
-                <TrendingUp size={12} />
-                <span>AI Prediction: Price Rising Soon</span>
-             </div>
-          )}
+          {/* AI Price Prediction & Stock Scarcity - Revenue Driver */}
+          <div className="flex flex-col gap-2 mb-3">
+             {stockLevel < 20 && (
+                <div className="flex items-center gap-2">
+                   <div className="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-red-500 rounded-full animate-pulse" style={{width: `${stockLevel}%`}}></div>
+                   </div>
+                   <span className="text-[10px] font-bold text-red-400 whitespace-nowrap">Only {Math.ceil(stockLevel / 5)} left!</span>
+                </div>
+             )}
+             
+             {prediction === 'rising' && (
+                <div className="flex items-center gap-1.5 text-[10px] text-orange-400 bg-orange-400/10 px-2 py-1 rounded border border-orange-400/20 w-fit">
+                   <TrendingUp size={12} />
+                   <span>AI: Price Rising Soon</span>
+                </div>
+             )}
+          </div>
 
           {/* Countdown Timer */}
           {product.dealEndsIn && (
@@ -425,7 +446,7 @@ const DealCard: React.FC<DealCardProps> = ({ product, isSelectedForCompare, onTo
               <div className="absolute inset-0 bg-gradient-to-r from-nexus-gold via-yellow-200 to-nexus-gold opacity-80 animate-shimmer"></div>
               <div className="relative flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-nexus-goldHover to-nexus-gold px-4 py-3 text-black transition-all font-bold tracking-wider">
                 <ShoppingCart size={20} className="text-black group-hover/btn:scale-110 transition-transform" />
-                <span>BUY NOW - SAVE {discount}%</span>
+                <span>CHECK AVAILABILITY</span>
               </div>
             </a>
           </div>

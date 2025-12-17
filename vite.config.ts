@@ -4,9 +4,9 @@ import react from '@vitejs/plugin-react';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  // IMPORTANT: This matches your repository name 'Nexus-Deals'
+  // IMPORTANT: This matches your repository name 'PC-Deals'
   // The previous mismatch caused the "Connection Timeout" as scripts returned 404.
-  base: '/Nexus-Deals/', 
+  base: '/PC-Deals/', 
   build: {
     outDir: 'dist',
   },
