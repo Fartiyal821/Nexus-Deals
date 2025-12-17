@@ -14,19 +14,15 @@
     <meta property="og:title" content="Nexus PC Deals | Don't Overpay for PC Parts" />
     <meta property="og:description" content="Our AI scans retailers every 30s to find the lowest prices on RTX 4090s, Ryzens, and more." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://fartiyal821.github.io/Nexus-Deals/" />
+    <meta property="og:url" content="https://fartiyal821.github.io/PC-Deals/" />
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     
     <!-- Critical Runtime Polyfills & Error Handling -->
     <script>
-      // 1. Polyfill process/global for libraries that expect Node.js environment
+      // 1. Polyfill global for libraries that expect Node.js environment
       window.global = window;
-      window.process = {
-        env: { NODE_ENV: 'production' },
-        version: ''
-      };
 
       // 2. Helper to show error on screen
       function showStartupError(title, detail) {
@@ -61,14 +57,14 @@ ${detail}
         showStartupError('Module Error', `Reason: ${event.reason}`);
       });
 
-      // 5. Safety Timeout: If app doesn't load in 8 seconds, show error
+      // 5. Safety Timeout: If app doesn't load in 10 seconds, show error
       setTimeout(() => {
          const loader = document.querySelector('.loader-container .loader');
          // If loader is still there (meaning React hasn't replaced the root content)
          if (loader) {
-            showStartupError('Connection Timeout', 'The application took too long to initialize. \n\nPossible causes:\n1. Network firewall blocking scripts.\n2. Browser extensions interfering.\n3. GitHub Pages caching issues (try Ctrl+Shift+R).');
+            showStartupError('Connection Timeout', 'The application took too long to initialize. \n\n1. Ensure "base" in vite.config.ts matches your repository name.\n2. Check console for 404 errors.');
          }
-      }, 8000);
+      }, 10000);
     </script>
 
     <script>
