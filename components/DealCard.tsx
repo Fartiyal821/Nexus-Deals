@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Product, Review } from '../types';
-import { ShoppingCart, Star, TrendingDown, Clock, ExternalLink, Zap, CheckCircle2, MessageSquare, X, ChevronLeft, ChevronRight, Loader2, Bell, BellRing, Package, Scale, Share2, TrendingUp, AlertTriangle } from 'lucide-react';
+import { ShoppingCart, Star, TrendingDown, Clock, ExternalLink, Zap, CheckCircle2, MessageSquare, X, ChevronLeft, ChevronRight, Loader2, Bell, BellRing, Package, Scale, Share2, TrendingUp, AlertTriangle, Crown } from 'lucide-react';
 import { generateAffiliateLink, formatTimeLeft, fetchProductReviews } from '../services/apiService';
 import ShareModal from './ShareModal';
 
@@ -103,6 +103,7 @@ const DealCard: React.FC<DealCardProps> = ({ product, isSelectedForCompare, onTo
   };
 
   const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+  const isHighValue = discount >= 20;
   const affiliateUrl = generateAffiliateLink(product);
 
   const formatCurrency = (amount: number) => {
@@ -147,6 +148,13 @@ const DealCard: React.FC<DealCardProps> = ({ product, isSelectedForCompare, onTo
     <>
       <div className={`group relative bg-white/5 backdrop-blur-lg rounded-2xl overflow-hidden border transition-all duration-300 hover:shadow-[0_0_30px_rgba(139,92,246,0.25)] flex flex-col h-full transform hover:-translate-y-1 ${isSelectedForCompare ? 'border-nexus-accent' : 'border-white/10 hover:border-nexus-accent/50'}`}>
         
+        {/* High Value Badge - Top Left (Offset) */}
+        {isHighValue && !showReviews && (
+          <div className="absolute top-0 left-10 z-20 bg-gradient-to-br from-nexus-gold to-yellow-600 text-black font-bold text-[10px] px-2 py-1 rounded-b-lg shadow-lg flex items-center gap-1 animate-pulse-slow">
+             <Crown size={12} fill="black" /> BEST VALUE
+          </div>
+        )}
+
         {/* Compare Checkbox - Top Left */}
         {onToggleCompare && (
           <div className="absolute top-0 left-0 z-30 p-3">
