@@ -7,7 +7,7 @@ import ComparisonView from './components/ComparisonView';
 import { ToastContainer, ToastMessage } from './components/Toast';
 import { MOCK_DEALS, CATEGORIES } from './constants';
 import { ViewState, Product } from './types';
-import { Search, Filter, Loader2, Scale, Timer, X } from 'lucide-react';
+import { Search, Filter, Loader2, Scale, Timer, X, TrendingUp } from 'lucide-react';
 import { fetchLivePrices } from './services/apiService';
 
 function App() {
@@ -35,26 +35,38 @@ function App() {
     setToasts(prev => prev.filter(t => t.id !== id));
   };
 
-  // Social Proof Simulation
+  // Social Proof & Stock Urgency Simulation
   useEffect(() => {
     const names = ['Rahul', 'Aditya', 'Sneha', 'Vikram', 'Priya', 'Amit'];
     const cities = ['Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Pune'];
     const actions = ['just bought', 'just ordered', 'snagged a deal on'];
 
     const socialProofInterval = setInterval(() => {
+      // 30% chance to show a "Low Stock" warning instead of a purchase
       if (Math.random() > 0.7 && products.length > 0) {
-        const randomProduct = products[Math.floor(Math.random() * products.length)];
-        const randomName = names[Math.floor(Math.random() * names.length)];
-        const randomCity = cities[Math.floor(Math.random() * cities.length)];
-        const action = actions[Math.floor(Math.random() * actions.length)];
+        if (Math.random() > 0.5) {
+            // Purchase Notification
+            const randomProduct = products[Math.floor(Math.random() * products.length)];
+            const randomName = names[Math.floor(Math.random() * names.length)];
+            const randomCity = cities[Math.floor(Math.random() * cities.length)];
+            const action = actions[Math.floor(Math.random() * actions.length)];
 
-        addToast(
-          "New Purchase Verified", 
-          `${randomName} from ${randomCity} ${action} ${randomProduct.name.substring(0, 20)}...`, 
-          "success"
-        );
+            addToast(
+            "New Purchase Verified", 
+            `${randomName} from ${randomCity} ${action} ${randomProduct.name.substring(0, 20)}...`, 
+            "success"
+            );
+        } else {
+            // Low Stock Warning (FOMO)
+            const randomProduct = products[Math.floor(Math.random() * products.length)];
+            addToast(
+                "High Demand Alert",
+                `Stock running low for ${randomProduct.name.substring(0, 20)}... 12 people viewing this.`,
+                "warning"
+            );
+        }
       }
-    }, 15000);
+    }, 12000); // More frequent updates (12s)
 
     return () => clearInterval(socialProofInterval);
   }, [products]);
@@ -63,7 +75,7 @@ function App() {
   useEffect(() => {
     const timer = setTimeout(() => {
        setShowPromoPopup(true);
-    }, 5000); // Show popup after 5 seconds
+    }, 8000); // Show popup after 8 seconds
     return () => clearTimeout(timer);
   }, []);
 
@@ -268,13 +280,18 @@ function App() {
             <p className="text-slate-300 mb-6">
               Prices on RTX 40-Series are predicted to <span className="text-red-400 font-bold">rise 12%</span> in the next 24 hours due to supply shortages.
             </p>
-            <button 
-              onClick={() => setShowPromoPopup(false)}
-              className="w-full py-3 bg-nexus-gold hover:bg-nexus-goldHover text-black font-bold rounded-xl transition-all hover:scale-105 shadow-lg"
-            >
-              Secure My Deal Now
-            </button>
-            <p className="text-[10px] text-slate-500 mt-3">Nexus AI Market Prediction Engine • 94% Accuracy</p>
+            <div className="flex flex-col gap-2">
+                <button 
+                onClick={() => setShowPromoPopup(false)}
+                className="w-full py-3 bg-nexus-gold hover:bg-nexus-goldHover text-black font-bold rounded-xl transition-all hover:scale-105 shadow-lg"
+                >
+                Secure My Deal Now
+                </button>
+                <div className="flex items-center justify-center gap-1 text-[10px] text-orange-400">
+                    <TrendingUp size={10} />
+                    <span>842 people viewing these deals right now</span>
+                </div>
+            </div>
           </div>
         </div>
       )}
