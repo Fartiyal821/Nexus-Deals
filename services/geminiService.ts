@@ -6,7 +6,12 @@ let ai: GoogleGenAI | null = null;
 
 const getAI = () => {
   if (!ai) {
-    ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+    // Safety check: Ensure process.env exists to prevent crashes in some browser environments
+    const apiKey = (typeof process !== 'undefined' && process.env && process.env.API_KEY) 
+      ? process.env.API_KEY 
+      : '';
+      
+    ai = new GoogleGenAI({ apiKey: apiKey });
   }
   return ai;
 };
@@ -84,7 +89,7 @@ export const generatePCAdvice = async (userPrompt: string): Promise<{ text: stri
   } catch (error) {
     console.error("Gemini API Error:", error);
     return {
-      text: "I'm having trouble connecting to the Nexus mainframe right now. Please check your connection or try again later. (Make sure API Key is set)",
+      text: "I'm having trouble connecting to the Nexus mainframe right now. Please check your connection or try again later. (Make sure API Key is set in your environment)",
       products: []
     };
   }

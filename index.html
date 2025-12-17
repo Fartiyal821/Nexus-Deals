@@ -53,6 +53,11 @@ ${detail}
 
       // 4. Global Promise Rejection Handler (Async imports/API errors)
       window.addEventListener('unhandledrejection', function(event) {
+        // Ignore Google GenAI 400 errors (often missing API key) to prevent full app crash overlay
+        if (event.reason && event.reason.toString().includes('400')) {
+           console.warn('API Warning:', event.reason);
+           return;
+        }
         showStartupError('Async Loading Error', `Reason: ${event.reason}`);
       });
     </script>

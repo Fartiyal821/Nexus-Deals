@@ -7,8 +7,15 @@ import ComparisonView from './components/ComparisonView';
 import { ToastContainer, ToastMessage } from './components/Toast';
 import { MOCK_DEALS, CATEGORIES } from './constants';
 import { ViewState, Product } from './types';
-import { Search, Filter, Loader2, Scale, Timer, X, TrendingUp } from 'lucide-react';
+import { Search, Filter, Loader2, Scale, Timer, X, TrendingUp, AlertCircle, Crown, ShoppingBag, Users } from 'lucide-react';
 import { fetchLivePrices } from './services/apiService';
+
+interface Activity {
+  id: string;
+  text: string;
+  time: string;
+  type: 'purchase' | 'viewing';
+}
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewState>(ViewState.HOME);
@@ -17,6 +24,7 @@ function App() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
   
   // Comparison State
   const [compareList, setCompareList] = useState<Product[]>([]);
@@ -37,36 +45,49 @@ function App() {
 
   // Social Proof & Stock Urgency Simulation
   useEffect(() => {
-    const names = ['Rahul', 'Aditya', 'Sneha', 'Vikram', 'Priya', 'Amit'];
-    const cities = ['Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Pune'];
-    const actions = ['just bought', 'just ordered', 'snagged a deal on'];
+    const names = ['Rahul', 'Aditya', 'Sneha', 'Vikram', 'Priya', 'Amit', 'Anjali', 'Karan'];
+    const cities = ['Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Pune', 'Chennai'];
+    const actions = ['just bought', 'just ordered', 'snagged a deal on', 'saved ₹5000 on'];
 
     const socialProofInterval = setInterval(() => {
       // 30% chance to show a "Low Stock" warning instead of a purchase
-      if (Math.random() > 0.7 && products.length > 0) {
-        if (Math.random() > 0.5) {
+      if (Math.random() > 0.6 && products.length > 0) {
+        if (Math.random() > 0.4) {
             // Purchase Notification
             const randomProduct = products[Math.floor(Math.random() * products.length)];
             const randomName = names[Math.floor(Math.random() * names.length)];
             const randomCity = cities[Math.floor(Math.random() * cities.length)];
             const action = actions[Math.floor(Math.random() * actions.length)];
+            const message = `${randomName} from ${randomCity} ${action} ${randomProduct.name.substring(0, 25)}...`;
 
-            addToast(
-            "New Purchase Verified", 
-            `${randomName} from ${randomCity} ${action} ${randomProduct.name.substring(0, 20)}...`, 
-            "success"
-            );
+            addToast("New Purchase Verified", message, "success");
+            
+            // Add to activity feed
+            setActivities(prev => [{
+              id: Date.now().toString(),
+              text: message,
+              time: 'Just now',
+              type: 'purchase' as const
+            }, ...prev].slice(0, 5));
+
         } else {
             // Low Stock Warning (FOMO)
             const randomProduct = products[Math.floor(Math.random() * products.length)];
-            addToast(
-                "High Demand Alert",
-                `Stock running low for ${randomProduct.name.substring(0, 20)}... 12 people viewing this.`,
-                "warning"
-            );
+            const stockLeft = Math.floor(Math.random() * 4) + 1;
+            const message = `Only ${stockLeft} units left of ${randomProduct.name.substring(0, 20)}...`;
+            
+            addToast("High Demand Alert", `${message} 14 people viewing this.`, "warning");
+
+             // Add to activity feed
+             setActivities(prev => [{
+              id: Date.now().toString(),
+              text: `${message} 14 viewing.`,
+              time: 'Just now',
+              type: 'viewing' as const
+            }, ...prev].slice(0, 5));
         }
       }
-    }, 12000); // More frequent updates (12s)
+    }, 8000); // slightly faster updates for the feed
 
     return () => clearInterval(socialProofInterval);
   }, [products]);
@@ -75,7 +96,7 @@ function App() {
   useEffect(() => {
     const timer = setTimeout(() => {
        setShowPromoPopup(true);
-    }, 8000); // Show popup after 8 seconds
+    }, 5000); // Show popup after 5 seconds
     return () => clearTimeout(timer);
   }, []);
 
@@ -99,7 +120,15 @@ function App() {
       try {
         // Fetch fresh data
         const liveData = await fetchLivePrices(MOCK_DEALS);
-        setProducts(liveData);
+        
+        // Sort logic: High ticket items (GPUs, CPUs) first to maximize affiliate revenue
+        const sortedData = [...liveData].sort((a, b) => {
+           if (a.category === 'GPU' && b.category !== 'GPU') return -1;
+           if (a.category !== 'GPU' && b.category === 'GPU') return 1;
+           return b.price - a.price; // Higher price first
+        });
+        
+        setProducts(sortedData);
       } catch (error) {
         console.error("Error loading deals:", error);
         // Fallback to mock if API fails
@@ -209,6 +238,54 @@ function App() {
                   <p className="text-slate-500">Connecting to Amazon, Flipkart, Newegg APIs</p>
                 </div>
               ) : (
+                <>
+                {/* Featured / Trending Header & Live Feed */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 animate-fade-in-up">
+                  <div className="lg:col-span-2 flex flex-col justify-center">
+                    <div className="flex items-center gap-2 mb-2">
+                       <Crown className="text-nexus-gold" size={24} />
+                       <h2 className="text-2xl font-display font-bold text-white">Trending High-Yield Deals</h2>
+                    </div>
+                    <p className="text-slate-400">
+                      Top-rated hardware with the deepest discounts right now. 
+                      <span className="text-nexus-accent ml-1 font-medium">Updated 14s ago.</span>
+                    </p>
+                  </div>
+
+                  {/* Live Activity Feed */}
+                  <div className="bg-nexus-800/40 border border-nexus-700/50 rounded-xl p-4 backdrop-blur-sm">
+                    <div className="flex items-center justify-between mb-3 border-b border-white/5 pb-2">
+                      <div className="flex items-center gap-2 text-xs font-bold text-nexus-success uppercase tracking-wider">
+                         <div className="w-2 h-2 rounded-full bg-nexus-success animate-pulse"/>
+                         Live Market Activity
+                      </div>
+                      <span className="text-[10px] text-slate-500">Real-time</span>
+                    </div>
+                    <div className="space-y-3 max-h-[120px] overflow-hidden relative">
+                       {activities.length > 0 ? (
+                         activities.map((activity, idx) => (
+                           <div key={activity.id} className={`flex items-start gap-3 text-sm animate-slide-in ${idx === 0 ? 'opacity-100' : 'opacity-70'}`}>
+                              <div className={`mt-1 p-1 rounded-full ${activity.type === 'purchase' ? 'bg-green-500/20 text-green-400' : 'bg-orange-500/20 text-orange-400'}`}>
+                                 {activity.type === 'purchase' ? <ShoppingBag size={10} /> : <Users size={10} />}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                 <p className="text-slate-200 text-xs truncate leading-tight">{activity.text}</p>
+                                 <p className="text-[10px] text-slate-500 mt-0.5">{activity.time}</p>
+                              </div>
+                           </div>
+                         ))
+                       ) : (
+                         <div className="text-center py-4 text-xs text-slate-500 italic flex items-center justify-center gap-2">
+                            <Loader2 size={12} className="animate-spin" />
+                            Connecting to purchase stream...
+                         </div>
+                       )}
+                       {/* Fade overlay for bottom of list */}
+                       <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-nexus-900/50 to-transparent pointer-events-none"></div>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in-up">
                   {filteredDeals.length > 0 ? (
                     filteredDeals.map(deal => (
@@ -229,6 +306,7 @@ function App() {
                     </div>
                   )}
                 </div>
+                </>
               )}
               
               <div className="mt-20 border-t border-nexus-800 pt-10 text-center text-slate-500 text-sm">
@@ -259,7 +337,7 @@ function App() {
         <div className="bg-gradient-to-r from-red-600 via-pink-600 to-red-600 bg-[length:200%_100%] animate-[shimmer_5s_linear_infinite] text-white text-xs font-bold py-2 px-4 text-center relative z-[60]">
           <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
              <Timer size={14} className="animate-pulse" />
-             <span>FLASH SALE: EXTRA 15% OFF SELECTED GPUS - ENDS IN 2:45:00</span>
+             <span className="uppercase tracking-wide">FLASH SALE: GPU PRICES DROPPED 15% - ENDS IN 01:24:00</span>
              <button onClick={() => setShowBanner(false)} className="absolute right-4 top-1/2 -translate-y-1/2 opacity-70 hover:opacity-100">✕</button>
           </div>
         </div>
@@ -274,22 +352,22 @@ function App() {
               <X size={24} />
             </button>
             <div className="inline-block p-3 rounded-full bg-nexus-gold/20 text-nexus-gold mb-4 animate-pulse">
-               <Timer size={32} />
+               <AlertCircle size={32} />
             </div>
-            <h2 className="text-2xl font-display font-bold text-white mb-2">Wait! Don't Miss Out</h2>
+            <h2 className="text-2xl font-display font-bold text-white mb-2">Price Hike Incoming!</h2>
             <p className="text-slate-300 mb-6">
-              Prices on RTX 40-Series are predicted to <span className="text-red-400 font-bold">rise 12%</span> in the next 24 hours due to supply shortages.
+              Our AI predicts a <span className="text-red-400 font-bold">12% price increase</span> on RTX 40-Series cards in the next 4 hours.
             </p>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-3">
                 <button 
                 onClick={() => setShowPromoPopup(false)}
-                className="w-full py-3 bg-nexus-gold hover:bg-nexus-goldHover text-black font-bold rounded-xl transition-all hover:scale-105 shadow-lg"
+                className="w-full py-4 bg-nexus-gold hover:bg-nexus-goldHover text-black font-bold rounded-xl transition-all hover:scale-105 shadow-lg uppercase tracking-wide"
                 >
-                Secure My Deal Now
+                Lock In Current Prices
                 </button>
-                <div className="flex items-center justify-center gap-1 text-[10px] text-orange-400">
-                    <TrendingUp size={10} />
-                    <span>842 people viewing these deals right now</span>
+                <div className="flex items-center justify-center gap-1 text-[10px] text-orange-400 font-medium">
+                    <TrendingUp size={12} />
+                    <span className="animate-pulse">842 people viewing these deals right now</span>
                 </div>
             </div>
           </div>
