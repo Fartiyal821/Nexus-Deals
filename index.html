@@ -5,13 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Google Search Console Verification -->
-    <!-- Replace content="YOUR_CODE_HERE" with the code provided by Google Search Console -->
     <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE_HERE" />
     
     <title>Nexus PC Deals | AI Powered Hardware Savings</title>
     <meta name="description" content="Find the best PC hardware deals. Nexus AI tracks prices on GPUs, CPUs, and components to save you money. Real-time alerts and price predictions." />
     
-    <!-- Open Graph Tags for Social Sharing -->
+    <!-- Open Graph Tags -->
     <meta property="og:title" content="Nexus PC Deals | Don't Overpay for PC Parts" />
     <meta property="og:description" content="Our AI scans retailers every 30s to find the lowest prices on RTX 4090s, Ryzens, and more." />
     <meta property="og:type" content="website" />
@@ -34,6 +33,8 @@
                 700: '#334155',
                 accent: '#8b5cf6', // Violet
                 accentHover: '#7c3aed',
+                gold: '#f59e0b',
+                goldHover: '#d97706',
                 success: '#10b981',
                 warning: '#f59e0b',
                 danger: '#ef4444',
@@ -45,6 +46,7 @@
               'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
               'bounce-slow': 'bounce 3s infinite',
               'slide-in': 'slideIn 0.5s ease-out forwards',
+              'shimmer': 'shimmer 2s linear infinite',
             },
             keyframes: {
               glow: {
@@ -62,6 +64,10 @@
               slideIn: {
                 '0%': { transform: 'translateX(100%)', opacity: '0' },
                 '100%': { transform: 'translateX(0)', opacity: '1' },
+              },
+              shimmer: {
+                '0%': { backgroundPosition: '-200% 0' },
+                '100%': { backgroundPosition: '200% 0' },
               }
             }
           },
@@ -74,26 +80,37 @@
         color: #f8fafc;
         overflow-x: hidden;
       }
-      /* Custom scrollbar */
-      ::-webkit-scrollbar {
-        width: 8px;
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: #1e293b; }
+      ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+      ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      
+      /* Loading Spinner Styles */
+      .loader-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100vw;
+        background-color: #0f172a;
+        color: #8b5cf6;
       }
-      ::-webkit-scrollbar-track {
-        background: #1e293b;
+      .loader {
+        width: 48px;
+        height: 48px;
+        border: 5px solid #1e293b;
+        border-bottom-color: #8b5cf6;
+        border-radius: 50%;
+        display: inline-block;
+        box-sizing: border-box;
+        animation: rotation 1s linear infinite;
       }
-      ::-webkit-scrollbar-thumb {
-        background: #475569;
-        border-radius: 4px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #64748b;
-      }
-      .no-scrollbar::-webkit-scrollbar {
-        display: none;
-      }
-      .no-scrollbar {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
+      @keyframes rotation {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
       }
     </style>
   <script type="importmap">
@@ -104,14 +121,20 @@
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "react-dom": "https://esm.sh/react-dom@^19.2.3",
     "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
-    "lucide-react": "https://esm.sh/lucide-react@^0.561.0"
+    "lucide-react": "https://esm.sh/lucide-react@^0.561.0",
+    "vite": "https://esm.sh/vite@^7.3.0",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
   }
 }
 </script>
 </head>
   <body>
-    <div id="root"></div>
-    <!-- Changed /index.tsx to ./index.tsx for GitHub Pages relative path support -->
+    <div id="root">
+      <div class="loader-container">
+        <span class="loader"></span>
+        <p style="margin-top: 1rem; font-family: sans-serif; opacity: 0.8;">Initializing Nexus AI...</p>
+      </div>
+    </div>
     <script type="module" src="./index.tsx"></script>
   </body>
 </html>

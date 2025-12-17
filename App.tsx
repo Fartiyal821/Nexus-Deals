@@ -7,7 +7,7 @@ import ComparisonView from './components/ComparisonView';
 import { ToastContainer, ToastMessage } from './components/Toast';
 import { MOCK_DEALS, CATEGORIES } from './constants';
 import { ViewState, Product } from './types';
-import { Search, Filter, Loader2, Scale } from 'lucide-react';
+import { Search, Filter, Loader2, Scale, Timer } from 'lucide-react';
 import { fetchLivePrices } from './services/apiService';
 
 function App() {
@@ -20,6 +20,9 @@ function App() {
   
   // Comparison State
   const [compareList, setCompareList] = useState<Product[]>([]);
+
+  // Banner State
+  const [showBanner, setShowBanner] = useState(true);
 
   // Toast Handler
   const addToast = (title: string, message: string, type: 'success' | 'info' | 'warning' = 'info') => {
@@ -126,13 +129,13 @@ function App() {
     switch (currentView) {
       case ViewState.AI_BUILDER:
         return (
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in-up">
             <AIAssistant />
           </main>
         );
       case ViewState.COMPARE:
         return (
-          <main className="min-h-screen bg-nexus-900">
+          <main className="min-h-screen bg-nexus-900 animate-fade-in-up">
             <ComparisonView 
               products={compareList} 
               onRemove={removeFromCompare}
@@ -148,7 +151,7 @@ function App() {
             
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
               {/* Filters & Search */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 sticky top-20 z-40 bg-nexus-900/80 backdrop-blur-xl p-4 -mx-4 md:mx-0 rounded-2xl border border-nexus-700/50 shadow-lg">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 sticky top-20 z-40 bg-nexus-900/80 backdrop-blur-xl p-4 -mx-4 md:mx-0 rounded-2xl border border-nexus-700/50 shadow-lg transition-all duration-300">
                 <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar w-full md:w-auto">
                   {CATEGORIES.map(cat => (
                     <button
@@ -185,7 +188,7 @@ function App() {
                   <p className="text-slate-500">Connecting to Amazon, Flipkart, Newegg APIs</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in-up">
                   {filteredDeals.length > 0 ? (
                     filteredDeals.map(deal => (
                       <DealCard 
@@ -229,6 +232,18 @@ function App() {
 
   return (
     <div className="min-h-screen bg-nexus-900 text-white font-sans selection:bg-nexus-accent selection:text-white overflow-x-hidden">
+      
+      {/* Flash Sale Banner */}
+      {showBanner && (
+        <div className="bg-gradient-to-r from-red-600 via-pink-600 to-red-600 bg-[length:200%_100%] animate-[shimmer_5s_linear_infinite] text-white text-xs font-bold py-2 px-4 text-center relative z-[60]">
+          <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
+             <Timer size={14} className="animate-pulse" />
+             <span>FLASH SALE: EXTRA 15% OFF SELECTED GPUS - ENDS IN 2:45:00</span>
+             <button onClick={() => setShowBanner(false)} className="absolute right-4 top-1/2 -translate-y-1/2 opacity-70 hover:opacity-100">✕</button>
+          </div>
+        </div>
+      )}
+
       <Header currentView={currentView} onViewChange={setCurrentView} />
       
       {/* Global Toast Container */}
