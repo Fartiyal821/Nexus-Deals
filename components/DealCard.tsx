@@ -414,10 +414,10 @@ const DealCard: React.FC<DealCardProps> = ({ product, isSelectedForCompare, onTo
               rel="noopener noreferrer"
               className="relative w-full group/btn overflow-hidden rounded-xl bg-gradient-to-r from-yellow-500 to-orange-600 p-[1px] transition-all duration-300 hover:shadow-[0_0_20px_rgba(234,179,8,0.5)] transform hover:scale-[1.02]"
             >
-              <div className="absolute inset-0 bg-white/20 animate-shimmer"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/80 to-orange-600/80 animate-shimmer"></div>
               <div className="relative flex items-center justify-center gap-2 rounded-xl bg-nexus-900/90 px-4 py-3 text-white transition-all group-hover/btn:bg-transparent font-bold">
                 <ShoppingCart size={18} className="text-yellow-400 group-hover/btn:text-white transition-colors" />
-                <span className="tracking-wide group-hover/btn:text-white">BUY NOW @ {product.retailer}</span>
+                <span className="tracking-wide group-hover/btn:text-white uppercase">Buy Now</span>
               </div>
             </a>
           </div>
