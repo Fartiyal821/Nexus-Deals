@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  // Matches the repository name to fix 404/Timeout errors
-  base: '/PC-Deals/', 
+  // Matches your GitHub Pages repository name to fix 404/Timeout errors
+  base: '/Nexus-Deals/', 
   build: {
     outDir: 'dist',
     target: 'esnext'
