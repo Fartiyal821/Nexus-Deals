@@ -1,15 +1,13 @@
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
-  // IMPORTANT: Matches the repository name 'Nexus-Deals'
-  base: '/Nexus-Deals/', 
+  // Matches the repository name to fix 404/Timeout errors
+  base: '/PC-Deals/', 
   build: {
     outDir: 'dist',
+    target: 'esnext'
   },
-  define: {
-    'process.env': JSON.stringify(process.env) 
+  server: {
+    port: 3000
   }
 });
